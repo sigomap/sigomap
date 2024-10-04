@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2023-11-10T11:14:08 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Note_Credit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b258cd63-2ea2-4241-8959-d0231463b3ee">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SynchronRE"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="placement" uuid="4c798617-bb2f-4489-9620-40ae84627d3a">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SynchronRE"/>
+		<parameter name="aff_id" class="java.lang.Long">
+			<parameterDescription><![CDATA[]]></parameterDescription>
+		</parameter>
+		<parameter name="ces_id" class="java.lang.Long">
+			<parameterDescription><![CDATA[]]></parameterDescription>
+		</parameter>
+		<queryString language="SQL">
+			<![CDATA[SELECT repartition.aff_id,
+       repartition.rep_capital,
+       regexp_replace(to_char(repartition.rep_capital::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS rep_capital1 ,
+       repartition.rep_taux,
+       ROUND(repartition.rep_taux, 2) AS taux,
+       repartition.rep_sous_commission,
+       ROUND(repartition.rep_sous_commission, 2) AS taux_sous_commission,
+       repartition.rep_taux_com_ced,
+       ROUND(repartition.rep_taux_com_ced, 2) AS taux_com_cedante,
+       repartition.rep_taux_com_court,
+       ROUND(repartition.rep_taux_com_court, 2) AS taux_com_courtage,
+       repartition.typ_id,
+       repartition.cessionnaire_id,
+       repartition.rep_taux * affaire.fac_prime / 100::numeric AS prime_cedee,
+       regexp_replace(to_char(repartition.rep_taux * affaire.fac_prime / 100::numeric::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS prime_cedee1 ,
+       repartition.rep_taux_com_ced * (repartition.rep_taux * affaire.fac_prime / 100::numeric) / 100::numeric AS com_cedante,
+       regexp_replace(to_char(repartition.rep_taux_com_ced * (repartition.rep_taux * affaire.fac_prime / 100::numeric) / 100::numeric::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS com_cedante1 ,
+       repartition.rep_taux_com_court * (repartition.rep_taux * affaire.fac_prime / 100::numeric) / 100::numeric AS com_courtage,
+       regexp_replace(to_char(repartition.rep_taux_com_court * (repartition.rep_taux * affaire.fac_prime / 100::numeric) / 100::numeric::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS com_courtage1 ,
+       (repartition.rep_taux * affaire.fac_prime / 100::numeric) - (repartition.rep_taux_com_ced * (repartition.rep_taux * affaire.fac_prime / 100::numeric) / 100::numeric) - (repartition.rep_taux_com_court * (repartition.rep_taux * affaire.fac_prime / 100::numeric) / 100::numeric) AS prime_nette_cedee,
+       regexp_replace(to_char((repartition.rep_taux * affaire.fac_prime / 100::numeric) - (repartition.rep_taux_com_ced * (repartition.rep_taux * affaire.fac_prime / 100::numeric) / 100::numeric) - (repartition.rep_taux_com_court * (repartition.rep_taux * affaire.fac_prime / 100::numeric) / 100::numeric)::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS prime_nette_cedee1 ,
+       cessionnaire.ces_nom,
+       affaire.aff_activite,
+       affaire.aff_assure,
+       affaire.aff_capital_initial,
+       affaire.aff_code,
+       affaire.aff_date_echeance,
+       affaire.aff_date_effet,
+       affaire.fac_prime,
+       affaire.fac_smp_lci,
+       cedante.ced_nom_filiale,
+       couverture.cou_libelle
+FROM affaire,
+     cedante,
+     couverture,
+     repartition,
+     cessionnaire,
+     type
+WHERE repartition.cessionnaire_id = cessionnaire.ces_id
+  AND repartition.aff_id = affaire.aff_id
+  AND repartition.typ_id = type.type_id
+  AND affaire.couverture_id = couverture.cou_id
+  AND affaire.cedente_id = cedante.ced_id
+  AND type.unique_code in ('REP_PLA')
+  AND repartition.aff_id = $P{aff_id}
+  AND  repartition.cessionnaire_id =$P{ces_id}]]>
+		</queryString>
+		<field name="aff_id" class="java.lang.Long"/>
+		<field name="rep_capital" class="java.math.BigDecimal"/>
+		<field name="rep_capital1" class="java.lang.String"/>
+		<field name="rep_taux" class="java.math.BigDecimal"/>
+		<field name="taux" class="java.math.BigDecimal"/>
+		<field name="rep_sous_commission" class="java.math.BigDecimal"/>
+		<field name="taux_sous_commission" class="java.math.BigDecimal"/>
+		<field name="rep_taux_com_ced" class="java.math.BigDecimal"/>
+		<field name="taux_com_cedante" class="java.math.BigDecimal"/>
+		<field name="rep_taux_com_court" class="java.math.BigDecimal"/>
+		<field name="taux_com_courtage" class="java.math.BigDecimal"/>
+		<field name="typ_id" class="java.lang.Long"/>
+		<field name="cessionnaire_id" class="java.lang.Long"/>
+		<field name="prime_cedee" class="java.math.BigDecimal"/>
+		<field name="prime_cedee1" class="java.lang.String"/>
+		<field name="com_cedante" class="java.math.BigDecimal"/>
+		<field name="com_cedante1" class="java.lang.String"/>
+		<field name="com_courtage" class="java.math.BigDecimal"/>
+		<field name="com_courtage1" class="java.lang.String"/>
+		<field name="prime_nette_cedee" class="java.math.BigDecimal"/>
+		<field name="prime_nette_cedee1" class="java.lang.String"/>
+		<field name="ces_nom" class="java.lang.String"/>
+		<field name="aff_activite" class="java.lang.String"/>
+		<field name="aff_assure" class="java.lang.String"/>
+		<field name="aff_capital_initial" class="java.math.BigDecimal"/>
+		<field name="aff_code" class="java.lang.String"/>
+		<field name="aff_date_echeance" class="java.sql.Date"/>
+		<field name="aff_date_effet" class="java.sql.Date"/>
+		<field name="fac_prime" class="java.math.BigDecimal"/>
+		<field name="fac_smp_lci" class="java.math.BigDecimal"/>
+		<field name="ced_nom_filiale" class="java.lang.String"/>
+		<field name="cou_libelle" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="param_image" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["images/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo_nre" class="java.io.InputStream">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="visa" class="java.io.InputStream">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="aff_id" class="java.lang.Long"/>
+	<parameter name="ces_id" class="java.lang.Long"/>
+	<parameter name="qrCode" class="java.io.ByteArrayInputStream"/>
+	<parameter name="param_visible" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT distinct affaire.aff_id,
+                affaire.aff_activite,
+                affaire.aff_assure,
+                affaire.fac_numero_police,
+                affaire.aff_capital_initial,
+                regexp_replace(to_char(affaire.aff_capital_initial::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS aff_capital_initial1 ,
+                affaire.aff_code,
+                affaire.aff_date_echeance,
+                affaire.aff_date_effet,
+                affaire.fac_prime,
+                regexp_replace(to_char(affaire.fac_prime::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS fac_prime1 ,
+                affaire.fac_smp_lci,
+                regexp_replace(to_char(affaire.fac_smp_lci::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS fac_smp_lci1 ,
+                affaire.cedente_id,
+                cedante.ced_nom_filiale,
+                couverture.cou_libelle,
+                branche.bran_libelle,
+                repartition.cessionnaire_id,
+                bordereau.bord_num,
+                cessionnaire.ces_nom
+FROM affaire,
+     cedante,
+     couverture,
+     branche,
+     repartition,
+     bordereau,
+     cessionnaire
+WHERE affaire.couverture_id = couverture.cou_id
+  AND affaire.cedente_id = cedante.ced_id
+  AND repartition.cessionnaire_id = cessionnaire.ces_id
+  AND couverture.bran_id = branche.bran_id
+  AND affaire.aff_id = repartition.aff_id
+  AND bordereau.rep_id = repartition.rep_id
+  AND affaire.aff_id = $P{aff_id}
+  AND repartition.cessionnaire_id = $P{ces_id}]]>
+	</queryString>
+	<field name="aff_id" class="java.lang.Long"/>
+	<field name="aff_activite" class="java.lang.String"/>
+	<field name="aff_assure" class="java.lang.String"/>
+	<field name="fac_numero_police" class="java.lang.String"/>
+	<field name="aff_capital_initial" class="java.math.BigDecimal"/>
+	<field name="aff_capital_initial1" class="java.lang.String"/>
+	<field name="aff_code" class="java.lang.String"/>
+	<field name="aff_date_echeance" class="java.sql.Date"/>
+	<field name="aff_date_effet" class="java.sql.Date"/>
+	<field name="fac_prime" class="java.math.BigDecimal"/>
+	<field name="fac_prime1" class="java.lang.String"/>
+	<field name="fac_smp_lci" class="java.math.BigDecimal"/>
+	<field name="fac_smp_lci1" class="java.lang.String"/>
+	<field name="cedente_id" class="java.lang.Long"/>
+	<field name="ced_nom_filiale" class="java.lang.String"/>
+	<field name="cou_libelle" class="java.lang.String"/>
+	<field name="bran_libelle" class="java.lang.String"/>
+	<field name="cessionnaire_id" class="java.lang.Long"/>
+	<field name="bord_num" class="java.lang.String"/>
+	<field name="ces_nom" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="69" splitType="Stretch">
+			<image>
+				<reportElement x="178" y="3" width="172" height="64" uuid="f014caeb-d106-4590-aa46-b4249df00b39">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{logo_nre}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="660" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="32" width="554" height="33" backcolor="#DEDCDC" uuid="7e43f0d5-6454-4c47-8866-0fb63a0d98d0">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="34" width="554" height="28" uuid="140d89f3-16c4-41ce-972c-dfe42cd85420"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOTE DE CREDIT - CESSIONS FACULTATIVES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="10" width="318" height="21" uuid="26e7106e-6b35-430d-9b86-bc9eaf83dee7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ID FAC  :  "+$F{aff_code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="402" y="11" width="151" height="21" uuid="99b1449c-3876-4f4d-8676-1e8f48c2a65a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date   :    "+new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="119" width="1" height="245" uuid="3b8cc868-d776-485c-aafc-36fd32631336">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="1" y="119" width="553" height="1" uuid="f6923e4b-b21a-4fde-a84f-d642ca212642">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="554" y="119" width="1" height="245" uuid="4a881394-197a-411a-bf5c-39a747d58e6f">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="1" y="96" width="79" height="20" uuid="1b799f74-4d7a-4ad1-9b3d-d0a286ca99c9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<text><![CDATA[N°]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="364" width="553" height="1" uuid="8967cbfd-d537-4a83-b4a9-5e1873ad9785">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<rectangle>
+				<reportElement x="1" y="365" width="554" height="21" backcolor="#DEDCDC" uuid="ac27cc72-bcd5-401f-99e2-e44abb8b46e9">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="9" y="340" width="128" height="19" uuid="33717c1f-0550-4afb-b90c-5a3426985f6e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[N° Bordereau  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="321" width="128" height="19" uuid="62aab33a-7191-400f-9140-e8c21d5efa0a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Prime Nette  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="301" width="128" height="19" uuid="d4c12744-e014-49b5-88d6-af22cd1ae887">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[SMP / LCI  100%  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="282" width="128" height="19" uuid="e9213642-9551-481a-9092-b25eef6ea117">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Capitaux 100%  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="262" width="128" height="19" uuid="2d1b3c97-7ab0-4180-99aa-db22d8f28454">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Echeance  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="242" width="128" height="19" uuid="9a95726f-17c7-4ace-aea0-5534e3589095">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Effet  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="221" width="128" height="19" uuid="af0a50e7-8b12-49c3-b3dc-460f2de80aed">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[N° Police  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="164" width="128" height="36" uuid="7e925390-cb3d-4384-9fc7-3a68764fc15f">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Activités : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="144" width="128" height="19" uuid="45899ad7-c921-486c-9442-a1abcb2849c1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Assuré :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="124" width="128" height="19" uuid="24486a55-dbee-4412-8374-06689d46a799">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Filiale : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="201" width="128" height="19" uuid="5f2ca5d2-f5c5-44f0-95b9-846f0fe2a55c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<text><![CDATA[Branche  :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="130" y="262" width="250" height="19" uuid="ef70a682-6f3c-45f7-b0a8-40415815aca0">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{aff_date_echeance})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="131" y="124" width="250" height="19" uuid="5675dc18-65ae-457d-a0b5-d1b9196ce910">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ced_nom_filiale}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="144" width="250" height="19" uuid="9829d1a1-3a3e-42ed-8461-6167a39a903f">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aff_assure}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="201" width="250" height="19" uuid="cb28be2a-ee72-41d8-9c08-cc05c7bac2b2">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bran_libelle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="129" y="221" width="250" height="19" uuid="130d1826-9113-433a-bb33-298bc9e432c9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fac_numero_police}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="242" width="250" height="19" uuid="9abed91a-792b-4956-8659-896d0a355614">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format($F{aff_date_effet})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="281" width="250" height="19" uuid="fd5ede5e-e5bb-4c7e-acb8-94a451507688">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aff_capital_initial1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="300" width="250" height="19" uuid="cf59de28-3840-4e6e-a072-952328f8444e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fac_smp_lci1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="320" width="250" height="19" uuid="2bc72f5b-1ca1-48a9-aa35-9a839416bc39">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fac_prime1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="340" width="250" height="19" uuid="02687e5b-c55c-4ad8-ad69-4fba3041a818">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bord_num}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="164" width="250" height="36" uuid="caadd23f-f70a-4b18-9518-a8962037d258">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aff_activite}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="77" width="403" height="19" uuid="97ffe6f1-9c2b-4416-bd96-45846066c0ec">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Réassureur  :  " +$F{ces_nom}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="7" y="414" width="541" height="95" uuid="ac6c8901-fbb6-42a2-98ce-55d7a1170b08">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="placement" uuid="3655fb0d-6347-4fb8-8257-f1602b359744">
+						<datasetParameter name="aff_id">
+							<datasetParameterExpression><![CDATA[$F{aff_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ces_id">
+							<datasetParameterExpression><![CDATA[$F{cessionnaire_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="250" uuid="6b752072-45c6-433f-8b39-40d9d3db4129">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne1"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<jr:tableHeader style="Table_TH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineColor="#FFFFFF"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="250" height="19" uuid="d43507b5-e6f1-4a66-b818-fcd4df83c96f"/>
+								<box>
+									<pen lineColor="#FFFFFF"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<text><![CDATA[Engagement Réassureur]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:tableFooter style="Table_TH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<box>
+								<pen lineColor="#FFFFFF"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="250" height="19" uuid="3c6140dc-8488-4488-9bfd-91dfc4f76cf1"/>
+								<box>
+									<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+									<topPen lineWidth="1.0" lineColor="#FFFFFF"/>
+									<leftPen lineWidth="1.0" lineColor="#FFFFFF"/>
+									<bottomPen lineWidth="1.0" lineColor="#FFFFFF"/>
+									<rightPen lineWidth="1.0" lineColor="#FFFFFF"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif" size="13"/>
+								</textElement>
+								<text><![CDATA[Prime nette cédée]]></text>
+							</staticText>
+						</jr:tableFooter>
+						<jr:columnHeader style="Table_CH" height="19" rowSpan="1">
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="250" height="19" uuid="23ff66ba-b7c1-4715-99f3-afcdf3cb3c1d"/>
+								<box>
+									<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif" size="13"/>
+								</textElement>
+								<text><![CDATA[Prime cédée]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<box>
+								<pen lineWidth="0.0"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="250" height="19" uuid="aa19e2df-9920-4b08-a540-efe8237d2ea6"/>
+								<box>
+									<pen lineWidth="0.0" lineColor="#FFFFFF"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif" size="13"/>
+								</textElement>
+								<text><![CDATA[Courtage NELSON RE]]></text>
+							</staticText>
+						</jr:columnFooter>
+						<jr:detailCell style="Table_TD" height="19">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="250" height="19" uuid="cdce28a9-b1d8-4969-8c8d-a539f055b89e"/>
+								<box>
+									<pen lineColor="#FFFFFF"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif" size="13"/>
+								</textElement>
+								<text><![CDATA[Commission cédante]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="150" uuid="0278ae43-57ba-45da-bc8b-d3494dbbe925">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne2"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<jr:tableHeader style="Table_TH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="150" height="19" uuid="01e0f0c6-b6f1-4e25-ae91-ff8bb1de6ce8"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{taux} +" % "]]></textFieldExpression>
+							</textField>
+						</jr:tableHeader>
+						<jr:tableFooter style="Table_TH" height="19" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0"/>
+							</box>
+						</jr:tableFooter>
+						<jr:columnHeader style="Table_CH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="19" rowSpan="1">
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="150" height="19" uuid="3d0dc343-8c96-417c-af7a-9356d71fb93b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{taux_com_courtage} + " % "]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell style="Table_TD" height="19">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="150" height="19" uuid="9d78e585-397f-43ac-b5ee-a4c5b9027021"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{taux_com_cedante} + " % "]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="141" uuid="b380d6bf-64ff-4e37-97af-0598e02ff97a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne3"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<jr:tableHeader style="Table_TH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="141" height="19" uuid="d42b4d19-b47b-443e-90e3-38c6e3aed850"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{rep_capital1}]]></textFieldExpression>
+							</textField>
+						</jr:tableHeader>
+						<jr:tableFooter style="Table_TH" height="19" rowSpan="1">
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="141" height="19" uuid="1c6895c3-213e-4a26-8748-eb552fe7a712"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{prime_nette_cedee1}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnHeader style="Table_CH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="141" height="19" uuid="57df5144-45ff-4c5f-9ebf-b8d6cd9ebab0"/>
+								<box>
+									<pen lineColor="#FFFFFF"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{prime_cedee1}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="19" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="141" height="19" uuid="c1b09a00-9c64-4977-9fea-45ebd80cfb2f"/>
+								<textElement textAlignment="Right">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{com_courtage1}]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell style="Table_TD" height="19">
+							<box>
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="141" height="19" uuid="ce7e26bc-43e2-4431-bc5a-21b308aac330"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{com_cedante1}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<line>
+				<reportElement x="1" y="387" width="1" height="258" uuid="ccbcecb3-574e-4032-b544-87f1c2f30b7b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="555" y="387" width="1" height="258" uuid="aa4e583c-d625-4b26-863d-f6c118449061">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="334" y="565" width="214" height="22" uuid="26d61cb6-9eb0-4870-ae99-6d967956142e"/>
+				<textElement>
+					<font fontName="SansSerif" size="12" isBold="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Le Département Réassurance]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="156" y="525" width="280" height="15" uuid="7577464c-c573-44a5-840b-1acaefb80a4a">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Fait à Abidjan, le "+new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="645" width="553" height="1" uuid="2f49184c-002d-4649-82c2-c4085f46a762">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<rectangle>
+				<reportElement x="257" y="392" width="291" height="19" uuid="ad78d8f8-5aac-449a-a06a-41e88874e269">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#FFFFFF"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="258" y="391" width="150" height="19" uuid="1b6b3ef7-2617-4ce1-8788-b896e250601a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Taux]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="391" width="141" height="19" uuid="6694f27e-9820-4c98-9e31-bb90dadc8aa0">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Montant]]></text>
+			</staticText>
+			<image>
+				<reportElement x="12" y="543" width="97" height="77" uuid="75a354a2-39c4-42a0-8fad-fcb9f7e4ce1e"/>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="334" y="589" width="196" height="45" uuid="f4f5efc0-8f3f-4f68-b7a3-b34335c8422b">
+					<printWhenExpression><![CDATA[$P{param_visible}.equals( "true" )]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{visa}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

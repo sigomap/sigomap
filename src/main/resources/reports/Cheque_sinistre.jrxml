@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2023-12-18T19:52:14 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Cheque_sinistre" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1fa4fb2c-0829-45de-b665-259e0dfcfd71">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SynchronRE"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="212"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="780"/>
+	<parameter name="reg_id" class="java.lang.Long">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT c.ced_nom_filiale,
+       r.reg_id,
+       regexp_replace(to_char(r.reg_montant, 'FM999,999,999,999'), ',', ' ', 'g') AS reg_montant_temp ,
+       r.reg_montant_lettre
+FROM reglement r,sinistre s,affaire a,cedante c
+WHERE  r.sin_id = s.sin_id
+AND s.aff_id=a.aff_id
+AND a.cedente_id=c.ced_id
+  AND r.reg_id =  $P{reg_id}
+  ]]>
+	</queryString>
+	<field name="ced_nom_filiale" class="java.lang.String"/>
+	<field name="reg_id" class="java.lang.Long"/>
+	<field name="reg_montant_temp" class="java.lang.String"/>
+	<field name="reg_montant_lettre" class="java.lang.String"/>
+	<group name="reg_id">
+		<groupExpression><![CDATA[$F{reg_id}]]></groupExpression>
+	</group>
+	<group name="reg_montant_temp">
+		<groupExpression><![CDATA[$F{reg_montant_temp}]]></groupExpression>
+	</group>
+	<group name="reg_montant_lettre">
+		<groupExpression><![CDATA[$F{reg_montant_lettre}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="302" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="280" y="98" width="542" height="30" uuid="c03af9dd-04df-435b-a669-30df971de2a2"/>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+					<paragraph lineSpacing="Double"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg_montant_lettre}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="110" y="130" width="530" height="20" uuid="7a9504e6-d9c2-4e7a-af3e-e742c53710db"/>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ced_nom_filiale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="362" y="152" width="140" height="20" uuid="b86d5ee8-8bec-4c9a-99b3-db883d31f0f2"/>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ABIDJAN "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="480" y="150" width="170" height="20" uuid="1a973c53-a6ad-4561-9d8d-598c50a13149"/>
+				<textElement>
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="470" y="13" width="191" height="20" uuid="e88bef0b-ecf1-4c7e-b891-18e04b898201">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement markup="html">
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg_montant_temp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

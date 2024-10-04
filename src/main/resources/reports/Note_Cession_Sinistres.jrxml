@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2023-12-19T19:28:52 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Note_Cession_Sinistres" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="54a6edc6-296d-48b8-a151-dc15e0c35d6f">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SynchronRE"/>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="cessions_leg" uuid="56033add-ddb5-4138-81d7-b76501ac4488">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SynchronRE"/>
+		<parameter name="aff_id" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[$P{aff_id}]]></defaultValueExpression>
+		</parameter>
+		<queryString language="SQL">
+			<![CDATA[SELECT repartition.aff_id,
+    repartition.rep_capital,
+    repartition.rep_taux,
+	param_cession_legale.param_ces_leg_libelle,
+    repartition.rep_sous_commission,
+    repartition.rep_tauxcom_ced,
+    repartition.rep_tauxcom_court,
+    repartition.typ_id,
+    affaire.aff_activite,
+    affaire.aff_assure,
+    affaire.aff_capital_initial,
+    affaire.aff_code,
+    affaire.aff_date_echeance,
+    affaire.aff_date_effet,
+    affaire.fac_prime,
+    affaire.fac_smp_lci,
+    cedante.ced_nom_filiale,
+    couverture.cou_libelle
+   FROM affaire,
+    cedante,
+    couverture,
+    repartition,
+	param_cession_legale
+  WHERE repartition.aff_id = affaire.aff_id 
+  AND affaire.couverture_id = couverture.cou_id 
+  AND affaire.cedente_id = cedante.ced_id
+  AND affaire.aff_statut_creation = 'REALISEE'
+  AND repartition.param_ces_legal_id = param_cession_legale.param_ces_leg_id
+  AND repartition.typ_id = 1
+  AND affaire.aff_id = $P{aff_id}]]>
+		</queryString>
+		<field name="aff_id" class="java.lang.Long"/>
+		<field name="rep_capital" class="java.math.BigDecimal"/>
+		<field name="rep_taux" class="java.math.BigDecimal"/>
+		<field name="param_ces_leg_libelle" class="java.lang.String"/>
+		<field name="rep_sous_commission" class="java.math.BigDecimal"/>
+		<field name="rep_tauxcom_ced" class="java.math.BigDecimal"/>
+		<field name="rep_tauxcom_court" class="java.math.BigDecimal"/>
+		<field name="typ_id" class="java.lang.Long"/>
+		<field name="aff_activite" class="java.lang.String"/>
+		<field name="aff_assure" class="java.lang.String"/>
+		<field name="aff_capital_initial" class="java.math.BigDecimal"/>
+		<field name="aff_code" class="java.lang.String"/>
+		<field name="aff_date_echeance" class="java.sql.Date"/>
+		<field name="aff_date_effet" class="java.sql.Date"/>
+		<field name="fac_prime" class="java.math.BigDecimal"/>
+		<field name="fac_smp_lci" class="java.math.BigDecimal"/>
+		<field name="ced_nom_filiale" class="java.lang.String"/>
+		<field name="cou_libelle" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="placement" uuid="5daa503a-2815-4d1a-8382-493ed68e225a">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SynchronRE"/>
+		<parameter name="aff_id" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[$P{aff_id}]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ces_id" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[$P{ces_id}]]></defaultValueExpression>
+		</parameter>
+		<queryString language="SQL">
+			<![CDATA[SELECT repartition.aff_id,
+       repartition.rep_capital,
+       repartition.rep_taux,
+       ROUND(repartition.rep_taux, 2) AS taux,
+       repartition.rep_sous_commission,
+       repartition.rep_taux_com_ced,
+       repartition.rep_taux_com_court,
+       repartition.typ_id,
+       repartition.cessionnaire_id,
+       repartition.rep_taux * sinistre.sin_montant100 / 100::numeric AS montant_averser,
+       regexp_replace(to_char(repartition.rep_taux * sinistre.sin_montant100 / 100::numeric::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS montant_averser1,
+       SUM(repartition.rep_taux * sinistre.sin_montant100 / 100::numeric) AS total_averser,
+       regexp_replace(to_char(SUM(repartition.rep_taux * sinistre.sin_montant100 / 100::numeric)::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS total_averser1,
+       cessionnaire.ces_nom,
+       cedante.ced_nom_filiale,
+       couverture.cou_libelle
+FROM affaire,
+     cedante,
+     couverture,
+     repartition,
+     cessionnaire,
+     type,
+     sinistre
+WHERE repartition.cessionnaire_id = cessionnaire.ces_id
+  AND repartition.aff_id = affaire.aff_id
+  AND affaire.aff_id = sinistre.aff_id
+  AND affaire.couverture_id = couverture.cou_id
+  AND affaire.cedente_id = cedante.ced_id
+  AND repartition.typ_id = type.type_id
+  AND type.unique_code in ('REP_PLA')
+  AND affaire.aff_statut_creation = 'REALISEE'
+  AND sinistre.sin_id = $P{aff_id}
+  AND  repartition.cessionnaire_id =$P{ces_id}
+GROUP BY repartition.aff_id,
+ repartition.rep_capital, 
+ repartition.rep_taux,
+  repartition.rep_sous_commission, 
+  repartition.rep_taux_com_ced,
+   repartition.rep_taux_com_court,
+    repartition.typ_id, 
+    repartition.cessionnaire_id, 
+    repartition.rep_taux * sinistre.sin_montant100 / 100::numeric, regexp_replace(to_char(repartition.rep_taux * sinistre.sin_montant100 / 100::numeric::numeric, 'FM999,999,999,999'), ',', ' ', 'g'), 
+    cessionnaire.ces_nom, 
+    cedante.ced_nom_filiale, 
+    couverture.cou_libelle]]>
+		</queryString>
+		<field name="aff_id" class="java.lang.Long"/>
+		<field name="rep_capital" class="java.math.BigDecimal"/>
+		<field name="rep_taux" class="java.math.BigDecimal"/>
+		<field name="taux" class="java.math.BigDecimal"/>
+		<field name="rep_sous_commission" class="java.math.BigDecimal"/>
+		<field name="rep_taux_com_ced" class="java.math.BigDecimal"/>
+		<field name="rep_taux_com_court" class="java.math.BigDecimal"/>
+		<field name="typ_id" class="java.lang.Long"/>
+		<field name="cessionnaire_id" class="java.lang.Long"/>
+		<field name="montant_averser" class="java.math.BigDecimal"/>
+		<field name="montant_averser1" class="java.lang.String"/>
+		<field name="total_averser" class="java.math.BigDecimal"/>
+		<field name="total_averser1" class="java.lang.String"/>
+		<field name="ces_nom" class="java.lang.String"/>
+		<field name="ced_nom_filiale" class="java.lang.String"/>
+		<field name="cou_libelle" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="cessions_filiale" uuid="d8ddf05e-ea75-45b5-a419-7b6d7cf3fc90">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SynchronRE"/>
+		<parameter name="aff_id" class="java.lang.Long">
+			<parameterDescription><![CDATA[]]></parameterDescription>
+		</parameter>
+		<queryString language="SQL">
+			<![CDATA[SELECT repartition.aff_id,
+    repartition.rep_capital,
+    repartition.rep_taux,
+    repartition.rep_sous_commission,
+    repartition.rep_taux_com_ced,
+    repartition.rep_taux_com_court,
+    repartition.typ_id,
+    affaire.aff_activite,
+    affaire.aff_assure,
+    affaire.aff_capital_initial,
+    affaire.aff_code,
+    affaire.aff_date_echeance,
+    affaire.aff_date_effet,
+    affaire.fac_prime,
+    affaire.fac_smp_lci,
+    cedante.ced_nom_filiale,
+    couverture.cou_libelle
+   FROM affaire,
+    cedante,
+    couverture,
+    repartition
+  WHERE repartition.aff_id = affaire.aff_id 
+  AND affaire.couverture_id = couverture.cou_id 
+  AND affaire.cedente_id = cedante.ced_id
+  AND repartition.typ_id = 2
+  AND affaire.aff_id = $P{aff_id}]]>
+		</queryString>
+		<field name="aff_id" class="java.lang.Long"/>
+		<field name="rep_capital" class="java.math.BigDecimal"/>
+		<field name="rep_taux" class="java.math.BigDecimal"/>
+		<field name="rep_sous_commission" class="java.math.BigDecimal"/>
+		<field name="rep_taux_com_ced" class="java.math.BigDecimal"/>
+		<field name="rep_taux_com_court" class="java.math.BigDecimal"/>
+		<field name="typ_id" class="java.lang.Long"/>
+		<field name="aff_activite" class="java.lang.String"/>
+		<field name="aff_assure" class="java.lang.String"/>
+		<field name="aff_capital_initial" class="java.math.BigDecimal"/>
+		<field name="aff_code" class="java.lang.String"/>
+		<field name="aff_date_echeance" class="java.sql.Date"/>
+		<field name="aff_date_effet" class="java.sql.Date"/>
+		<field name="fac_prime" class="java.math.BigDecimal"/>
+		<field name="fac_smp_lci" class="java.math.BigDecimal"/>
+		<field name="ced_nom_filiale" class="java.lang.String"/>
+		<field name="cou_libelle" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="cessions_legales" uuid="56cbe35e-f6c9-4e10-9b9d-f5a694af8312">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SynchronRE"/>
+		<parameter name="aff_id" class="java.lang.Long"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT repartition.aff_id,
+    repartition.rep_capital,
+    repartition.rep_taux,
+	param_cession_legale.param_ces_leg_libelle,
+    repartition.rep_sous_commission,
+    repartition.rep_taux_com_ced,
+    repartition.rep_taux_com_court,
+    repartition.typ_id,
+    affaire.aff_activite,
+    affaire.aff_assure,
+    affaire.aff_capital_initial,
+    affaire.aff_code,
+    affaire.aff_date_echeance,
+    affaire.aff_date_effet,
+    affaire.fac_prime,
+    affaire.fac_smp_lci,
+    cedante.ced_nom_filiale,
+    couverture.cou_libelle
+   FROM affaire,
+    cedante,
+    couverture,
+    repartition,
+	param_cession_legale
+  WHERE repartition.aff_id = affaire.aff_id 
+  AND affaire.couverture_id = couverture.cou_id 
+  AND affaire.cedente_id = cedante.ced_id
+  AND repartition.param_ces_legal_id = param_cession_legale.param_ces_leg_id
+  AND repartition.typ_id = 1
+  AND affaire.aff_id = $P{aff_id}]]>
+		</queryString>
+		<field name="aff_id" class="java.lang.Long"/>
+		<field name="rep_capital" class="java.math.BigDecimal"/>
+		<field name="rep_taux" class="java.math.BigDecimal"/>
+		<field name="param_ces_leg_libelle" class="java.lang.String"/>
+		<field name="rep_sous_commission" class="java.math.BigDecimal"/>
+		<field name="rep_taux_com_ced" class="java.math.BigDecimal"/>
+		<field name="rep_taux_com_court" class="java.math.BigDecimal"/>
+		<field name="typ_id" class="java.lang.Long"/>
+		<field name="aff_activite" class="java.lang.String"/>
+		<field name="aff_assure" class="java.lang.String"/>
+		<field name="aff_capital_initial" class="java.math.BigDecimal"/>
+		<field name="aff_code" class="java.lang.String"/>
+		<field name="aff_date_echeance" class="java.sql.Date"/>
+		<field name="aff_date_effet" class="java.sql.Date"/>
+		<field name="fac_prime" class="java.math.BigDecimal"/>
+		<field name="fac_smp_lci" class="java.math.BigDecimal"/>
+		<field name="ced_nom_filiale" class="java.lang.String"/>
+		<field name="cou_libelle" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="param_image" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["images/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo_nre" class="java.io.InputStream">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="visa" class="java.io.InputStream">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="aff_id" class="java.lang.Long"/>
+	<parameter name="ces_id" class="java.lang.Long"/>
+	<parameter name="qrCode" class="java.io.ByteArrayInputStream"/>
+	<parameter name="param_visible" class="java.lang.String"/>
+	<parameter name="interlocuteur" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT affaire.aff_id,
+       affaire.aff_activite,
+       affaire.aff_assure,
+       affaire.fac_numero_police,
+       affaire.aff_capital_initial,
+       affaire.aff_code,
+       affaire.aff_date_echeance,
+       affaire.aff_date_effet,
+       affaire.fac_prime,
+       affaire.fac_smp_lci,
+       regexp_replace(to_char(affaire.fac_smp_lci::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS fac_smp_lci1 ,
+       sinistre.sin_code,
+       sinistre.sin_id,
+       sinistre.sin_commentaire,
+       affaire.cedente_id,
+       sinistre.sin_montant100,
+       regexp_replace(to_char(sinistre.sin_montant100::numeric, 'FM999,999,999,999'), ',', ' ', 'g') AS sin_montant1001 ,
+       cedante.ced_nom_filiale,
+       couverture.cou_libelle,
+       branche.bran_libelle,
+       cessionnaire.ces_nom,
+       repartition.cessionnaire_id,
+       devise.dev_libelle
+FROM affaire,
+     cedante,
+     cessionnaire,
+     couverture,
+     branche,
+     repartition,
+     devise,
+     sinistre
+WHERE affaire.couverture_id = couverture.cou_id
+  AND affaire.cedente_id = cedante.ced_id
+  AND couverture.bran_id = branche.bran_id
+  AND affaire.aff_id = repartition.aff_id
+  AND affaire.devise_code = devise.dev_code
+  AND repartition.cessionnaire_id = cessionnaire.ces_id
+  AND affaire.aff_id = sinistre.aff_id
+  AND affaire.aff_statut_creation = 'REALISEE'
+  AND sinistre.sin_id = $P{aff_id}
+  AND repartition.cessionnaire_id = $P{ces_id}]]>
+	</queryString>
+	<field name="aff_id" class="java.lang.Long"/>
+	<field name="aff_activite" class="java.lang.String"/>
+	<field name="aff_assure" class="java.lang.String"/>
+	<field name="fac_numero_police" class="java.lang.String"/>
+	<field name="aff_capital_initial" class="java.math.BigDecimal"/>
+	<field name="aff_code" class="java.lang.String"/>
+	<field name="aff_date_echeance" class="java.sql.Date"/>
+	<field name="aff_date_effet" class="java.sql.Date"/>
+	<field name="fac_prime" class="java.math.BigDecimal"/>
+	<field name="fac_smp_lci" class="java.math.BigDecimal"/>
+	<field name="fac_smp_lci1" class="java.lang.String"/>
+	<field name="sin_code" class="java.lang.String"/>
+	<field name="sin_id" class="java.lang.Long"/>
+	<field name="sin_commentaire" class="java.lang.String"/>
+	<field name="cedente_id" class="java.lang.Long"/>
+	<field name="sin_montant100" class="java.math.BigDecimal"/>
+	<field name="sin_montant1001" class="java.lang.String"/>
+	<field name="ced_nom_filiale" class="java.lang.String"/>
+	<field name="cou_libelle" class="java.lang.String"/>
+	<field name="bran_libelle" class="java.lang.String"/>
+	<field name="ces_nom" class="java.lang.String"/>
+	<field name="cessionnaire_id" class="java.lang.Long"/>
+	<field name="dev_libelle" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="84" splitType="Stretch">
+			<image>
+				<reportElement x="179" y="3" width="190" height="67" uuid="a1be9f72-70eb-412c-b67b-a258a34cba59"/>
+				<imageExpression><![CDATA[$P{logo_nre}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="57" splitType="Stretch">
+			<staticText>
+				<reportElement x="70" y="7" width="371" height="31" uuid="84c4ffd7-2525-417f-8c2a-33f524d18c4f"/>
+				<box>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOTE DE CESSION SINISTRE]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="560" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="166" y="295" width="293" height="15" uuid="b044fa67-4de7-4964-9841-e6c6ea8900ef">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Abidjan, le "+new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="7" y="453" width="139" height="22" uuid="ebca94a8-6980-4997-8770-5161f18d7f02"/>
+				<textElement>
+					<font size="12" isBold="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[LA CEDANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="455" width="139" height="22" uuid="10374ccd-9492-453f-9beb-f25850d7b37e"/>
+				<textElement>
+					<font size="12" isBold="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[LE REASSUREUR]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="13" y="4" width="307" height="19" uuid="e535119c-2aff-404e-b149-67ed70e8cb59">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Réassureur : "+$F{ces_nom}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="13" y="25" width="307" height="19" uuid="d6be577a-e94e-466b-a4fd-b57ea86e64d9">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Interlocuteur : " +$P{interlocuteur}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="331" y="25" width="220" height="19" uuid="078daa03-13b5-467f-9492-94eb642c3ed7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Monnaie : " +$F{dev_libelle}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="8" y="90" width="544" height="1" uuid="16dc833b-4370-422b-9ae6-56edcd58e340">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="9" y="111" width="544" height="1" uuid="4023d57d-4e4b-41b3-adc1-3bd9c519d5ce">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="9" y="171" width="544" height="1" uuid="823f3eed-eb9c-4d9c-86e6-5402580e07ec">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="305" y="90" width="1" height="61" uuid="cc33b8e4-b07c-4834-8d60-dde02ff4c7ac">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="9" y="207" width="544" height="1" uuid="ef2de4ef-3834-43d3-96cf-2d51fa513599">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="9" y="225" width="544" height="1" uuid="fa21d5b4-354c-4beb-b5de-73fb15f54355">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="9" y="245" width="544" height="1" uuid="7bd0a5b9-1451-44e7-9b88-73710612a307">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="202" y="209" width="1" height="15" uuid="5d2f0c10-55ad-468c-ab8b-0b135fea5c96">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="9" y="207" width="192" height="18" uuid="e3becf9a-a4e2-46d1-8f21-abb37db49277">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Montant du sinistre (100%)]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="9" y="112" width="296" height="39" uuid="c5a0e808-9559-42ed-9a58-5e72a8c77d88">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Activités :  "+$F{aff_activite}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="11" y="70" width="540" height="19" uuid="1e0e53bd-b39d-4068-92d7-f8b1281a02b2">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Assuré : "+$F{aff_assure}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="11" y="90" width="292" height="19" uuid="277283dc-3ccc-4455-976d-29123e580919">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Police N° : "+$F{fac_numero_police}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="171" width="194" height="20" uuid="03618629-86cb-4b71-bf5a-6a65f8465136">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capitaux Totaux assurés]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="113" width="48" height="34" uuid="7dd2b415-a81b-43ba-95fa-14ee535080ed">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Branche :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="90" width="48" height="19" uuid="6816df8c-9236-4dab-80c0-1148f146fc8a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Filiale :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="332" y="48" width="219" height="19" uuid="684f6cb7-b467-4ceb-b27c-3b336007c3af">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["N°  FAC : "+$F{aff_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="354" y="91" width="192" height="19" uuid="9b7415df-a2a6-41e5-a788-e85567fccb95">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ced_nom_filiale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="204" y="172" width="347" height="19" forecolor="#FA2F28" uuid="963a7416-5c54-477c-b7de-a847bcf76421">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fac_smp_lci1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="205" y="207" width="347" height="16" uuid="2072ad40-25b6-40c1-82c4-76d517474bff">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sin_montant1001}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="354" y="113" width="195" height="37" uuid="95aed40c-6fdb-4808-81c4-ffe754fe0f31">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bran_libelle}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="8" y="225" width="546" height="38" uuid="d5dc5ab2-f98c-4a8f-b81b-1ea5b45a3eea">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.next" value="true"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="placement" uuid="161cb6b0-aef0-430d-8d83-eff07eb834c5">
+						<datasetParameter name="ces_id">
+							<datasetParameterExpression><![CDATA[$F{cessionnaire_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="aff_id">
+							<datasetParameterExpression><![CDATA[$F{sin_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="194" uuid="947ab0d5-1f34-491d-b003-2c999c4b19c0">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne1"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<jr:tableHeader style="Table 1_TH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<staticText>
+								<reportElement x="0" y="0" width="194" height="19" uuid="14382701-040d-4336-b50f-5cb1e423c41f"/>
+								<box>
+									<pen lineWidth="1.0"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<text><![CDATA[ Engagement Réassureur]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="19">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<staticText>
+								<reportElement x="0" y="0" width="194" height="19" uuid="c5ad354a-140f-484a-9d91-411be9205c80"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif" size="12"/>
+								</textElement>
+								<text><![CDATA[Sinistre à payer]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="182" uuid="8ce2832a-9a51-4435-b93f-f5764f6b9bce">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne2"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<jr:tableHeader style="Table 1_TH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="182" height="19" uuid="69e48c4c-088d-4a4d-a76e-dcc5fbd84448"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{taux} + " % "]]></textFieldExpression>
+							</textField>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="19"/>
+					</jr:column>
+					<jr:column width="170" uuid="a53ee871-b4f6-4fc5-a77b-dba3897f3731">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne3"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<jr:tableHeader style="Table 1_TH" height="19" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="170" height="19" uuid="70851f7c-7927-41c4-80d5-125e90766695"/>
+								<box>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{montant_averser1}]]></textFieldExpression>
+							</textField>
+						</jr:tableHeader>
+						<jr:detailCell style="Table 1_TD" height="19">
+							<textField>
+								<reportElement x="0" y="0" width="170" height="19" uuid="bb1414fe-3a64-4be3-8efd-3a323a9e52ed"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{total_averser1}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<line>
+				<reportElement x="553" y="2" width="1" height="244" uuid="2535bdfe-3b16-4e46-a906-fca87261a244">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="8" y="2" width="1" height="244" uuid="2db4b1cd-fa40-43ca-a18d-6514c6c7ea75">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="8" y="2" width="546" height="1" uuid="8de11148-dd8f-47fb-be7f-813a338c26d2">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="9" y="69" width="544" height="1" uuid="2139d8f3-6b1e-469b-b57b-0506ad0ce51f">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="9" y="46" width="544" height="1" uuid="e54a4362-a429-4697-8db4-2cb1e1b415cd">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="9" y="23" width="544" height="1" uuid="ec99de9a-18d9-4964-b18a-0aa475af6b28">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<rectangle>
+				<reportElement x="9" y="193" width="544" height="13" backcolor="#BAB6B6" uuid="79c97cb0-4490-4c46-a00f-72ee00cee5eb">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<line>
+				<reportElement x="8" y="150" width="544" height="1" uuid="5b4d3734-d8e9-4465-bc15-89c99118ab69">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="10" y="152" width="440" height="19" uuid="ba998d43-a5b8-41a8-bfed-671980f2663c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Période de garantie  :  " +new SimpleDateFormat("dd/MM/yy").format($F{aff_date_effet} ) + "   au   "  +new SimpleDateFormat("dd/MM/yy").format($F{aff_date_echeance})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="277" y="3" width="276" height="19" uuid="fc41182c-8868-4c42-8a08-01eb1706189c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["N° Bordereau  :  "  +$F{sin_code}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="13" y="318" width="117" height="98" uuid="5e64b21e-6ecf-40ef-afa7-cbef69b55ad2"/>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="9" y="46" width="311" height="21" uuid="6bec8b7c-3919-4862-8330-476c34e0ce50">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Avis du sinistre   :   "  + $F{sin_commentaire}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="360" y="475" width="191" height="20" uuid="91d53cd7-14af-41a9-a22c-257274d299d3">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ced_nom_filiale}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="2" y="490" width="177" height="64" uuid="3a104618-0a60-4899-b2de-082e93d6fbec">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{param_visible}.equals( "true" )]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{visa}]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="471" width="287" height="19" uuid="47a5ecbc-cae1-44a6-80cd-37d67a7b3a8e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NELSON RE CI  P/C  "+$F{ced_nom_filiale}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
